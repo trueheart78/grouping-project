@@ -4,7 +4,5 @@
 ENV['APP_ENV'] = 'development'
 require_relative '../booster_pack'
 
-# You can add fixtures and/or initialization code here to make experimenting
-# with your gem easier. You can also use a different console, if you like.
-
+# Create a Pry-based prompt to load into
 Pry.start
