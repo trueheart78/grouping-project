@@ -1,0 +1,57 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+ENV['APP_ENV'] = 'development'
+require_relative '../booster_pack'
+
+require 'optparse'
+require 'benchmark'
+
+match_types = %w[email phone email_or_phone]
+
+options = {}
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: #{$PROGRAM_NAME} --file [FILENAME] --match-type [MATCH_TYPE]"
+
+  opts.on('-f', '--file FILENAME', 'CSV file to process') do |filename|
+    options[:file] = filename
+  end
+
+  opts.on('-m', '--match-type FIELD', match_types,
+          "Field to use for record identification (#{match_types.join(", ")})") do |match_type|
+    options[:match_type] = match_type
+  end
+
+  opts.on('-h', '--help', 'Show this help') do
+    puts opts
+    exit
+  end
+end
+
+parser.parse!
+
+if options[:file].nil?
+  puts 'Error: --file is required'
+  puts
+  puts parser
+  exit 1
+end
+
+if options[:match_type].nil?
+  puts "Error: --match-type is required (#{supported_types.join(", ")})"
+  puts
+  puts parser
+  exit 1
+end
+
+matcher = CsvHandler.new(options[:match_type], options[:file])
+
+puts "Matching Type: #{options[:match_type]}"
+puts "Input File:    #{File.expand_path(options[:file])}"
+puts "Output File:   #{matcher.output_file}"
+puts
+print 'Processing... '
+
+seconds = Benchmark.realtime { matcher.parse }
+
+puts "complete! (#{seconds.ceil(5)} sec)"
