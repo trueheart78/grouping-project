@@ -59,7 +59,10 @@ class PersonMatcher
   def perform_email_or_phone_match
     return unless current_record[owner_header].empty?
 
-    if !existing_owner_ids[:email].nil? && existing_owner_ids[:phone].nil?
+    if !existing_owner_ids[:email].nil? && !existing_owner_ids[:phone].nil?
+      # if the email has an owner and the phone has an owner, assign this record to the owner of the email
+      current_record[owner_header] = existing_owner_ids[:email]
+    elsif !existing_owner_ids[:email].nil? && existing_owner_ids[:phone].nil?
       # if the email has an owner and the phone does not, this and the phone go to the email owner
       assign_email_owner(existing_owner_ids[:email])
     elsif !existing_owner_ids[:phone].nil?
