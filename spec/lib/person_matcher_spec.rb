@@ -107,6 +107,7 @@ RSpec.describe PersonMatcher do
           gen_fake_record(phone: shared_phones.last, email: 'unique@example.com'), # person1 via transitive phone
           gen_fake_record(phone: '555-222-2222', email: 'i.am.unique@example.com'), # person2
           gen_fake_record, # person3
+          gen_fake_record(phone: shared_phones.last, email: shared_emails.first), # person1 via email
           gen_fake_record(email: 'mr.smith@example.com'), # person4
           gen_fake_record(phone: '555-333-3333') # person5
         ]
@@ -116,7 +117,7 @@ RSpec.describe PersonMatcher do
       let(:owner_ids) do
         ownership_records.map {|r| r['OwnerId'] }
       end
-      let(:expected_owner_ids) { %w[person1 person1 person1 person1 person1 person2 person3 person4 person5] }
+      let(:expected_owner_ids) { %w[person1 person1 person1 person1 person1 person2 person3 person1 person4 person5] }
 
       it 'contains the three unique owner ids in the expected order' do
         expect(owner_ids).to eq(expected_owner_ids)
